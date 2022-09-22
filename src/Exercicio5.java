@@ -87,6 +87,7 @@ public class Exercicio5
             // Armazenar pais
             String pais = colunas[0];
 
+
             if (!String.valueOf(pais).equals("Brazil"))
                 return;
 
@@ -96,7 +97,7 @@ public class Exercicio5
             // Ocorrencia
             int ocorrencia = 1;
             // Passando chave (valor1, valor 2) para o cont sort/shuffle
-            con.write(new Exercicio5Writable(categoria, ano, quantidade), new DoubleWritable(preco));
+            con.write(new Exercicio5Writable(ano, quantidade, categoria), new DoubleWritable(preco));
 
         }
     }

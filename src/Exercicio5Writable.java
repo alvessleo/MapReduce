@@ -14,18 +14,18 @@ import java.io.IOException;
 
 public class Exercicio5Writable implements WritableComparable<Exercicio5Writable>
 {
-    String categoria;
     String ano;
     String quantidade;
+    String categoria;
 
 
     public Exercicio5Writable() {
     }
 
-    public Exercicio5Writable(String categoria, String ano, String quantidade) {
-        this.categoria = categoria;
+    public Exercicio5Writable(String ano, String quantidade, String categoria) {
         this.ano = ano;
         this.quantidade = quantidade;
+        this.categoria = categoria;
     }
 
     public String getCategoria() {
@@ -55,7 +55,8 @@ public class Exercicio5Writable implements WritableComparable<Exercicio5Writable
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int hashcode = ano.hashCode() + quantidade.hashCode() + categoria.hashCode();
+        return hashcode;
     }
 
     @Override
