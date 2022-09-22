@@ -1,3 +1,4 @@
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
@@ -13,46 +14,46 @@ import java.io.IOException;
 
 public class Exercicio4Writable implements WritableComparable<Exercicio4Writable>
 {
-    double somaPreco;
-    int ocorrencia;
+    private String ano;
+    private String commoditie;
 
-    // Construtor vazio
     public Exercicio4Writable()
     {
 
     }
 
-    // Construtor
-    public Exercicio4Writable(double somaPreco, int ocorrencia)
+    public Exercicio4Writable(String ano, String commoditie)
     {
-        this.somaPreco = somaPreco;
-        this.ocorrencia = ocorrencia;
+        this.ano = ano;
+        this.commoditie = commoditie;
     }
 
-    public double getSomaPreco()
+    public String getAno()
     {
-        return somaPreco;
+        return ano;
     }
 
-    public void setSomaPreco(double somaPreco)
+    public void setAno(String ano)
     {
-        this.somaPreco = somaPreco;
+        this.ano = ano;
     }
 
-    public int getOcorrencia()
+    public String getCommoditie()
     {
-        return ocorrencia;
+        return commoditie;
     }
 
-    public void setOcorrencia(int ocorrencia)
+    public void setCommoditie(String commoditie)
     {
-        this.ocorrencia = ocorrencia;
+        this.commoditie = commoditie;
     }
 
     @Override
     public int hashCode()
     {
-        return super.hashCode();
+
+        int hashcode = ano.hashCode() + commoditie.hashCode();
+        return hashcode;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class Exercicio4Writable implements WritableComparable<Exercicio4Writable
     @Override
     public String toString()
     {
-        return super.toString();
+        return ano + "  " + commoditie;
     }
 
     @Override
@@ -85,14 +86,14 @@ public class Exercicio4Writable implements WritableComparable<Exercicio4Writable
     @Override
     public void write(DataOutput dataOutput) throws IOException
     {
-        dataOutput.writeDouble(somaPreco);
-        dataOutput.writeInt(ocorrencia);
+        Text.writeString(dataOutput,ano);
+        Text.writeString(dataOutput,commoditie);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException
     {
-        somaPreco = dataInput.readDouble();
-        ocorrencia = dataInput.readInt();
+        ano = Text.readString(dataInput);
+        commoditie = Text.readString(dataInput);
     }
 }

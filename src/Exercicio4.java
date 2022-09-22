@@ -37,9 +37,10 @@ public class Exercicio4
         j.setReducerClass(Exercicio4.ReduceExercicio4.class);
 
         // Definição das tipos de saída
-        j.setOutputKeyClass(Text.class); //chave do map
-        j.setMapOutputValueClass(Exercicio4Writable.class); //Valor do Map
-        j.setOutputKeyClass(Text.class); // chave do reduce
+
+        j.setMapOutputValueClass(DoubleWritable.class); //Valor do Map
+        j.setMapOutputKeyClass(Exercicio4Writable.class); // chave do reduce
+        j.setOutputKeyClass(Exercicio4Writable.class); //chave do map
         j.setOutputValueClass(DoubleWritable.class); // Valor do reduce
 
         // Cadastrar arquivo de entrada e saída
@@ -52,7 +53,7 @@ public class Exercicio4
     }
 
     // Exercicio4Writable será criado uma classe com esse nome para depois somar os valores das temperaturas
-    public static class MapExercicio4 extends Mapper<LongWritable, Text, Text, Exercicio4Writable>
+    public static class MapExercicio4 extends Mapper<LongWritable, Text, Exercicio4Writable, DoubleWritable>
     {
         // Funcao de map
         public void map(LongWritable key, Text value, Context con)
@@ -67,32 +68,32 @@ public class Exercicio4
             // Transforma a preço das commodities que anteriormente era lida como String para Double
             double preco = Double.parseDouble(colunas[5]);
             // Armazenar o ano da ocorrência
-            Text ano = new Text(colunas[1]);
-            // Ocorrencia
-            int ocorrencia = 1;
+            String ano = colunas[1];
+            // Armazenar a commoditie
+            String commoditite = colunas[3];
             // Passando chave (valor1, valor 2) para o cont sort/shuffle
-            con.write(ano, new Exercicio4Writable(preco, ocorrencia));
+            con.write(new Exercicio4Writable(ano, commoditite), new DoubleWritable(preco));
 
         }
     }
 
-    public static class ReduceExercicio4 extends Reducer<Text, Exercicio4Writable, Text, DoubleWritable>
+    public static class ReduceExercicio4 extends Reducer<Exercicio4Writable, DoubleWritable, Exercicio4Writable, DoubleWritable>
     {
-        public void reduce(Text key, Iterable<Exercicio4Writable> values, Context con)
-                throws IOException, InterruptedException {
+        public void reduce(Exercicio4Writable key, Iterable<DoubleWritable> values, Context con)
+                throws IOException, InterruptedException
+        {
 
             double somaPreco = 0;
-            int somaOcorrencia = 0;
+            int ocorrencias = 0;
 
             // Somando temperatura e ocorrencia
-            for (Exercicio4Writable o:values)
+            for (DoubleWritable o:values)
             {
-                somaPreco += o.getSomaPreco();
-                somaOcorrencia += o.getOcorrencia();
+                somaPreco += o.get();
+                ocorrencias++;
             }
 
-            // calculando a média com base nas somas das temperaturas e ocorrencias
-            DoubleWritable media = new DoubleWritable(somaPreco / somaOcorrencia);
+            DoubleWritable media = new DoubleWritable(somaPreco / ocorrencias);
             // Escrever os resultados na HDFS
             con.write(key, media);
 
