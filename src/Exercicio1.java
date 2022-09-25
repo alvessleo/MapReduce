@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.log4j.BasicConfigurator;
 
-// 1. The number of transactions involving Brazil;
+// The number of transactions involving Brazil;
 
 public class Exercicio1 {
 
@@ -22,14 +22,14 @@ public class Exercicio1 {
 
         Configuration c = new Configuration();
         String[] files = new GenericOptionsParser(c, args).getRemainingArgs();
+
         // arquivo de entrada
         Path input = new Path("./in/operacoes_comerciais_inteira.csv");
-
         // arquivo de saida
         Path output = new Path("./output/exercicio1");
 
         // criacao do job e seu nome
-        Job j = new Job(c, "exercicio1");
+        Job j = new Job(c, "Exercicio1");
 
         // registro das classes
         j.setJarByClass(Exercicio1.class);
@@ -57,11 +57,13 @@ public class Exercicio1 {
 
             // pega o conteudo da linha
             String linha = value.toString();
+
             // ignora o conteudo do cabeçalho
             if (linha.startsWith("country_or_area")) return;
 
             // quebra a linha de caracteres
             String[] caracteres = linha.split(";");
+
             // pegar o pais
             String pais = caracteres[0];
 
@@ -71,21 +73,19 @@ public class Exercicio1 {
 
     public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 
-
         public void reduce(Text key, Iterable<IntWritable> values, Context con)
                 throws IOException, InterruptedException {
-            // soma das ocorrencia de cada caracter (C, G, T....) e total
+
+            // soma das ocorrencia da palavra Brazil
             long soma = 0;
             if (String.valueOf(key).equals("Brazil")){
                 for (IntWritable i : values){
                     soma += i.get();
-
                 }
+
                 // escreve o resultado no HDFS
                 con.write(key, new IntWritable((int)soma));
             }
-
-
         }
     }
 

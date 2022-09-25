@@ -12,8 +12,6 @@ import org.apache.log4j.BasicConfigurator;
 import java.io.IOException;
 
 // The average price of commodities per unit type, year, and category in the export flow in Brazil;
-// A media de preco das commodities por tipo de unidade, ano e categoria de export flow no Brasil.
-
 
 public class Exercicio5
 {
@@ -23,16 +21,15 @@ public class Exercicio5
 
         Configuration c = new Configuration();
         String[] files = new GenericOptionsParser(c, args).getRemainingArgs();
+
         // arquivo de entrada
         Path input = new Path("./in/operacoes_comerciais_inteira.csv");
-
         // arquivo de saida
         Path output = new Path("./output/exercicio5");
 
         // criacao do job e seu nome
         Job j = new Job(c, "Exercicio5");
 
-        // -=-=-=-=-=-=-=-=-=-=-=-= PARTE FINAL -=-=-=-=-=-=-=-=-=-=-=-=
         // Registro das classes
         j.setJarByClass(Exercicio5.class);
         j.setMapperClass(Exercicio5.MapExercicio5.class);
@@ -53,10 +50,9 @@ public class Exercicio5
 
     }
 
-    // Exercicio4Writable será criado uma classe com esse nome para depois somar os valores das temperaturas
     public static class MapExercicio5 extends Mapper<LongWritable, Text, Exercicio5Writable, DoubleWritable >
     {
-        // Funcao de map    ANO UNIDADE CATEGORIA PRECO FLOW COUNTRY
+        // Funcao de map
         public void map(LongWritable key, Text value, Context con)
                 throws IOException, InterruptedException {
 
@@ -66,7 +62,7 @@ public class Exercicio5
             // ignora o conteudo do cabeçalho
             if (linha.startsWith("country_or_area")) return;
 
-            // Divide a linha em várias colunas para que seja possivel pegar a temperatura
+            // Divide a linha em várias colunas
             String[] colunas = linha.split (";");
 
             // Transforma a preço das commodities que anteriormente era lida como String para Double
@@ -75,7 +71,7 @@ public class Exercicio5
             // Armazenar o flow
             Text flow = new Text(colunas[4]);
 
-            // Armazenar o ano da ocorrência
+            // Armazenar o ano
             String ano = colunas[1];
 
             // Armazenar a categoria
@@ -94,8 +90,6 @@ public class Exercicio5
             if (!String.valueOf(flow).equals("Export"))
                 return;
 
-            // Ocorrencia
-            int ocorrencia = 1;
             // Passando chave (valor1, valor 2) para o cont sort/shuffle
             con.write(new Exercicio5Writable(ano, quantidade, categoria), new DoubleWritable(preco));
 
@@ -111,16 +105,14 @@ public class Exercicio5
             double somaPreco = 0;
             int somaOcorrencia = 0;
 
-            // Somando temperatura e ocorrencia
+            // Somando preco e ocorrencias para fazer a media
             for (DoubleWritable o:values)
             {
                 somaPreco += o.get();
                 somaOcorrencia++;
             }
 
-
-
-            // calculando a média com base nas somas das temperaturas e ocorrencias
+            // calculando a média com base nas somas dos precos e ocorrencias
             DoubleWritable media = new DoubleWritable(somaPreco / somaOcorrencia);
             // Escrever os resultados na HDFS
             con.write(key, media);

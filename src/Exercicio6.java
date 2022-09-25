@@ -12,7 +12,7 @@ import org.apache.log4j.BasicConfigurator;
 
 import java.io.IOException;
 
-
+// The commodity with the highest price per unit type and year;
 
 public class Exercicio6 {
 
@@ -24,7 +24,6 @@ public class Exercicio6 {
 
         // arquivo de entrada
         Path input = new Path("./in/operacoes_comerciais_inteira.csv");
-
         // arquivo de saida
         Path output = new Path("./output/exercicio6");
 
@@ -44,7 +43,7 @@ public class Exercicio6 {
         FileInputFormat.addInputPath(j, input);
         FileOutputFormat.setOutputPath(j, output);
 
-        // executa o job
+        // espera para executar o job
         System.exit(j.waitForCompletion(true) ? 0 : 1);
     }
 
@@ -52,17 +51,22 @@ public class Exercicio6 {
         public void map(Object key, Text value, Context con) throws IOException,
                 InterruptedException {
 
+            // Converte a variável value que representa a linha do arquivo de Text para String
             String linha = value.toString();
 
+            // ignora o conteudo do cabeçalho
             if (linha.startsWith("country_or_area")) return;
 
+            // Divide a linha em colunas
             String[] coluna = linha.split(";");
 
-
+            // armazenar o ano
             String ano = coluna[1];
 
+            // armazenar o tipo de quantidade
             String quantityName = coluna[7];
 
+            // armazenar e transformar o preco para double
             double preco = Double.parseDouble(coluna[5]);
 
             con.write(new Exercicio6Writable(quantityName, ano), new DoubleWritable(preco));
@@ -77,6 +81,7 @@ public class Exercicio6 {
 
             double max = Double.MIN_VALUE;
 
+            // pegando o maior valor
             for(DoubleWritable o : values){
                 if (o.get() > max) max = o.get();
 
