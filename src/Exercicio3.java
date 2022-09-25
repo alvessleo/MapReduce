@@ -32,7 +32,7 @@ public class Exercicio3
         Path output = new Path("./output/exercicio3");
 
         // criacao da primeira rotina MapReduce
-        Job j1 = new Job(c, "contagem");
+        Job j1 = new Job(c, "exercicio3A");
 
         // definicao das classes
         j1.setJarByClass(Exercicio3.class);
@@ -53,7 +53,7 @@ public class Exercicio3
         j1.waitForCompletion(true);
 
         // execucao do job 2
-        Job j2 = new Job(c, "entropia");
+        Job j2 = new Job(c, "exercicio3B");
 
         // definicao das classes
         j2.setJarByClass(Exercicio3.class);
