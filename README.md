@@ -9,7 +9,7 @@ Orientation:
 ###Demands
 1. [x] The number of transactions involving Brazil;
 2. [x] The number of transactions per year;
-3. [ ] The most commercialized commodity (summing the Amount column) in 2016, per flow type.
+3. [x] The most commercialized commodity (summing the Amount column) in 2016, per flow type.
 4. [x] The average price of commodities per year;
 5. [x] The  average  price  of  commodities  per  unit  type,  year,  and  category  in  the  export  flow  in
    Brazil;
