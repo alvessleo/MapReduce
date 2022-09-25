@@ -26,7 +26,7 @@ public class Exercicio3
         Path input = new Path("./in/operacoes_comerciais_inteira.csv");
 
         // arquivo intermediario
-        Path intermediate = new Path("./output/intermediate.tmp");
+        Path intermediate = new Path("./output/intermediate");
 
         // arquivo de saida
         Path output = new Path("./output/exercicio3");
@@ -106,9 +106,9 @@ public class Exercicio3
         }
     }
 
-    public static class ReduceEtapaA extends Reducer<Exercicio3WritableB, LongWritable, Exercicio3WritableB, LongWritable>
+    public static class ReduceEtapaA extends Reducer<Exercicio3Writable, LongWritable, Exercicio3Writable, LongWritable>
     {
-        public void reduce(Exercicio3WritableB key, Iterable<LongWritable> values, Context con)
+        public void reduce(Exercicio3Writable key, Iterable<LongWritable> values, Context con)
                 throws IOException, InterruptedException
         {
 
@@ -131,16 +131,13 @@ public class Exercicio3
 
             // obtem a linha do arquivo intermediario
             String linha = value.toString();
-            // quebra linha em campos (caracter e quantidade)
+            // quebra linha em campos
             String[] campos = linha.split("\t");
-
             // armazena cada um dos campos
             String commodity = campos[0];
             String flow = campos[1];
             Long soma = Long.parseLong(campos[2]);
-
             // passa para o reduce:
-            // chave compartilhada: "entropia" e valor compostos(caracter, qtde)
             con.write(new Text(flow), new Exercicio3WritableB(commodity, soma));
         }
     }
