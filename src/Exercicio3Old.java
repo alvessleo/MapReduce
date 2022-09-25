@@ -11,9 +11,10 @@ import org.apache.log4j.BasicConfigurator;
 
 import java.io.IOException;
 
-// O preço médio das commodities por ano;
+// The most commercialized commodity (summing the Amount column) in 2016, per flow type.
 
-public class Exercicio4Old
+
+public class Exercicio3Old
 {
     public static void main(String args[]) throws IOException, ClassNotFoundException, InterruptedException
     {
@@ -25,22 +26,22 @@ public class Exercicio4Old
         Path input = new Path("./in/operacoes_comerciais_inteira.csv");
 
         // arquivo de saida
-        Path output = new Path("./output/exercicio4");
+        Path output = new Path("./output/exercicio3");
 
         // criacao do job e seu nome
-        Job j = new Job(c, "media");
+        Job j = new Job(c, "Exercicio3");
 
         // -=-=-=-=-=-=-=-=-=-=-=-= PARTE FINAL -=-=-=-=-=-=-=-=-=-=-=-=
         // Registro das classes
-        j.setJarByClass(Exercicio4Old.class);
-        j.setMapperClass(Exercicio4Old.MapExercicio4.class);
-        j.setReducerClass(Exercicio4Old.ReduceExercicio4.class);
+        j.setJarByClass(Exercicio3Old.class);
+        j.setMapperClass(Exercicio3Old.MapExercicio3.class);
+        j.setReducerClass(Exercicio3Old.ReduceExercicio3.class);
 
         // Definição das tipos de saída
-        j.setOutputKeyClass(Text.class); //chave do map
-        j.setMapOutputValueClass(Exercicio4WritableOld.class); //Valor do Map
-        j.setOutputKeyClass(Text.class); // chave do reduce
-        j.setOutputValueClass(DoubleWritable.class); // Valor do reduce
+        j.setOutputKeyClass(Exercicio3WritableOld.class); //chave do map
+        j.setMapOutputValueClass(IntWritable.class); //Valor do Map
+        j.setOutputKeyClass(Exercicio3WritableOld.class); // chave do reduce
+        j.setOutputValueClass(IntWritable.class); // Valor do reduce
 
         // Cadastrar arquivo de entrada e saída
         FileInputFormat.addInputPath(j, input);
@@ -52,49 +53,61 @@ public class Exercicio4Old
     }
 
     // Exercicio4Writable será criado uma classe com esse nome para depois somar os valores das temperaturas
-    public static class MapExercicio4 extends Mapper<LongWritable, Text, Text, Exercicio4WritableOld>
+    public static class MapExercicio3 extends Mapper<LongWritable, Text, Exercicio3WritableOld, IntWritable >
     {
-        // Funcao de map
+        // Funcao de map    ANO UNIDADE CATEGORIA PRECO FLOW COUNTRY
         public void map(LongWritable key, Text value, Context con)
                 throws IOException, InterruptedException {
 
             // Converte a variável value que representa a linha do arquivo de Text para String
             String linha = value.toString();
+
             // ignora o conteudo do cabeçalho
             if (linha.startsWith("country_or_area")) return;
+
             // Divide a linha em várias colunas para que seja possivel pegar a temperatura
             String[] colunas = linha.split (";");
-            // Transforma a preço das commodities que anteriormente era lida como String para Double
-            double preco = Double.parseDouble(colunas[5]);
+
+            // commodity
+            String commodity = colunas[2];
+
+            // Armazenar o flow
+            String flow = colunas[4];
+
             // Armazenar o ano da ocorrência
-            Text ano = new Text(colunas[1]);
+            String ano = colunas[1];
+
+            // Armazenar unidade
+            int quantidade = Integer.parseInt(colunas[8]);
+
+            if (!String.valueOf(ano).equals("2016"))
+                return;
+
+
             // Ocorrencia
             int ocorrencia = 1;
             // Passando chave (valor1, valor 2) para o cont sort/shuffle
-            con.write(ano, new Exercicio4WritableOld(preco, ocorrencia));
+            con.write(new Exercicio3WritableOld(commodity, flow), new IntWritable(quantidade));
 
         }
     }
 
-    public static class ReduceExercicio4 extends Reducer<Text, Exercicio4WritableOld, Text, DoubleWritable>
+
+    public static class ReduceExercicio3 extends Reducer<Exercicio3WritableOld, IntWritable, Exercicio3WritableOld, IntWritable>
     {
-        public void reduce(Text key, Iterable<Exercicio4WritableOld> values, Context con)
+        public void reduce(Exercicio3WritableOld key, Iterable<IntWritable> values, Context con)
                 throws IOException, InterruptedException {
 
-            double somaPreco = 0;
-            int somaOcorrencia = 0;
-
-            // Somando temperatura e ocorrencia
-            for (Exercicio4WritableOld o:values)
+            int soma = 0;
+            for (IntWritable v: values)
             {
-                somaPreco += o.getSomaPreco();
-                somaOcorrencia += o.getOcorrencia();
+                soma += v.get();
             }
 
-            // calculando a média com base nas somas das temperaturas e ocorrencias
-            DoubleWritable media = new DoubleWritable(somaPreco / somaOcorrencia);
-            // Escrever os resultados na HDFS
-            con.write(key, media);
+            IntWritable valorSaida = new IntWritable(soma); // Cast  de Int > IntWritable
+
+            // Salva os resultados no HDFS
+            con.write(key, valorSaida); // A key é a mesma recebida do Map, porem o valor saída é o valor somado.
 
         }
     }

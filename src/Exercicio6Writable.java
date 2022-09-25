@@ -46,7 +46,7 @@ public class Exercicio6Writable implements WritableComparable<Exercicio6Writable
 
     @Override
     public String toString() {
-        return quantityName + " " + ano;
+        return ano + "  " + quantityName;
     }
 
     @Override

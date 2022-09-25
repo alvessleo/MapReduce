@@ -9,20 +9,21 @@ Classe custom writale com atributos privados, construtor vazio.
 getters e setters para todos os atributos
 A classe tambem deve ser comparavel com ela mesma
 */
-public class Exercicio3Writable implements WritableComparable<Exercicio3Writable>
+
+public class Exercicio3WritableB implements WritableComparable<Exercicio3WritableB>
 {
     private String commodity;
-    private String flow;
+    private long soma;
 
-    public Exercicio3Writable()
+    public Exercicio3WritableB()
     {
 
     }
 
-    public Exercicio3Writable(String commodity, String flow)
+    public Exercicio3WritableB(String commodity, long soma)
     {
         this.commodity = commodity;
-        this.flow = flow;
+        this.soma = soma;
     }
 
     public String getCommodity()
@@ -35,20 +36,20 @@ public class Exercicio3Writable implements WritableComparable<Exercicio3Writable
         this.commodity = commodity;
     }
 
-    public String getFlow()
+    public long getSoma()
     {
-        return flow;
+        return soma;
     }
 
-    public void setFlow(String flow)
+    public void setSoma(long soma)
     {
-        this.flow = flow;
+        this.soma = soma;
     }
 
     @Override
     public int hashCode()
     {
-        int hashcode = commodity.hashCode() + flow.hashCode();
+        int hashcode = commodity.hashCode() + Long.hashCode(soma);
         return hashcode;
     }
 
@@ -61,11 +62,11 @@ public class Exercicio3Writable implements WritableComparable<Exercicio3Writable
     @Override
     public String toString()
     {
-        return commodity + " " + flow;
+        return commodity + " " + soma;
     }
 
     @Override
-    public int compareTo(Exercicio3Writable o)
+    public int compareTo(Exercicio3WritableB o)
     {
         if (this.hashCode() < o.hashCode())
         {
@@ -83,14 +84,13 @@ public class Exercicio3Writable implements WritableComparable<Exercicio3Writable
     public void write(DataOutput dataOutput) throws IOException
     {
         dataOutput.writeUTF(commodity);
-        dataOutput.writeUTF(flow);
+        dataOutput.writeLong(soma);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException
     {
         commodity = dataInput.readUTF();
-        flow = dataInput.readUTF();
+        soma = dataInput.readLong();
     }
-
 }
