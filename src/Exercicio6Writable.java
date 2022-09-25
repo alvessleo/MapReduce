@@ -1,4 +1,3 @@
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
@@ -7,73 +6,51 @@ import java.io.IOException;
 
 public class Exercicio6Writable implements WritableComparable<Exercicio6Writable>
 {
-    private String commodity;
-    private double preco;
-    private long quantidade;
+    String quantityName;
+    String ano;
 
-    public Exercicio6Writable()
-    {
-
+    public Exercicio6Writable() {
     }
 
-    public Exercicio6Writable(String commodity, double preco, long quantidade)
-    {
-        this.commodity = commodity;
-        this.preco = preco;
-        this.quantidade = quantidade;
+    public Exercicio6Writable(String quantityName, String ano) {
+        this.quantityName = quantityName;
+        this.ano = ano;
     }
 
-    public String getCommodity()
-    {
-        return commodity;
+    public String getQuantityName() {
+        return quantityName;
     }
 
-    public void setCommodity(String commodity)
-    {
-        this.commodity = commodity;
+    public void setQuantityName(String quantityName) {
+        this.quantityName = quantityName;
     }
 
-    public double getPreco()
-    {
-        return preco;
+    public String getAno() {
+        return ano;
     }
 
-    public void setPreco(double preco)
-    {
-        this.preco = preco;
-    }
-
-    public long getQuantidade()
-    {
-        return quantidade;
-    }
-
-    public void setQuantidade(long quantidade)
-    {
-        this.quantidade = quantidade;
+    public void setAno(String ano) {
+        this.ano = ano;
     }
 
     @Override
-    public int hashCode()
-    {
-        return super.hashCode();
+    public int hashCode() {
+        int hashcode = quantityName.hashCode() + ano.hashCode();
+        return hashcode;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         return super.equals(obj);
     }
 
     @Override
-    public String toString()
-    {
-        return commodity + "  " + preco + "  " + quantidade;
+    public String toString() {
+        return quantityName + " " + ano;
     }
 
     @Override
-    public int compareTo(Exercicio6Writable o)
-    {
+    public int compareTo(Exercicio6Writable o) {
         // Sempre é assim
         if(this.hashCode() < o.hashCode())
         {
@@ -87,18 +64,14 @@ public class Exercicio6Writable implements WritableComparable<Exercicio6Writable
     }
 
     @Override
-    public void write(DataOutput dataOutput) throws IOException
-    {
-        Text.writeString(dataOutput, commodity);
-        dataOutput.writeDouble(preco);
-        dataOutput.writeLong(quantidade);
+    public void write(DataOutput dataOutput) throws IOException {
+        dataOutput.writeUTF(quantityName);
+        dataOutput.writeUTF(ano);
     }
 
     @Override
-    public void readFields(DataInput dataInput) throws IOException
-    {
-        commodity = Text.readString(dataInput);
-        preco = dataInput.readDouble();
-        quantidade = dataInput.readLong();
+    public void readFields(DataInput dataInput) throws IOException {
+        quantityName = dataInput.readUTF();
+        ano = dataInput.readUTF();
     }
 }
